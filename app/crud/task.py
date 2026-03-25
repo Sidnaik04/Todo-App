@@ -6,9 +6,12 @@ from uuid import UUID
 
 
 # create a new task
-def create_task(db: Session, task: TaskCreate):
+def create_task(db: Session, task: TaskCreate, user_id: str):
     db_task = Task(
-        title=task.title, description=task.description, deadline=task.deadline
+        user_id=user_id,
+        title=task.title,
+        description=task.description,
+        deadline=task.deadline,
     )
 
     db.add(db_task)
@@ -19,10 +22,10 @@ def create_task(db: Session, task: TaskCreate):
 
 
 # list all the task
-def get_tasks(db: Session, limit: int = 10, offset: int = 10):
+def get_tasks(db: Session, user_id: str, limit: int = 10, offset: int = 10):
     return (
         db.query(Task)
-        .filter(Task.is_deleted == False)
+        .filter(Task.user_id == user_id, Task.is_deleted == False)
         .order_by(Task.deadline.asc())
         .offset(offset)
         .limit(limit)
@@ -31,13 +34,21 @@ def get_tasks(db: Session, limit: int = 10, offset: int = 10):
 
 
 # get single task with id
-def get_task_by_id(db: Session, task_id: UUID):
-    return db.query(Task).filter(Task.id == task_id, Task.is_deleted == False).first()
+def get_task_by_id(db: Session, task_id: UUID, user_id: str):
+    return (
+        db.query(Task)
+        .filter(Task.id == task_id, Task.user_id == user_id, Task.is_deleted == False)
+        .first()
+    )
 
 
 # update the task
-def update_task(db: Session, task_id: UUID, task_data: TaskUpdate):
-    task = db.query(Task).filter(Task.id == task_id, Task.is_deleted == False).first()
+def update_task(db: Session, task_id: UUID, task_data: TaskUpdate, user_id: str):
+    task = (
+        db.query(Task)
+        .filter(Task.id == task_id, Task.user_id == user_id, Task.is_deleted == False)
+        .first()
+    )
 
     if not task:
         return None
@@ -57,8 +68,12 @@ def update_task(db: Session, task_id: UUID, task_data: TaskUpdate):
 
 
 # mark task as complete
-def mark_task_complete(db: Session, task_id: UUID):
-    task = db.query(Task).filter(Task.id == task_id, Task.is_deleted == False).first()
+def mark_task_complete(db: Session, task_id: UUID, user_id: str):
+    task = (
+        db.query(Task)
+        .filter(Task.id == task_id, Task.user_id == user_id, Task.is_deleted == False)
+        .first()
+    )
 
     if not task:
         return None
@@ -72,8 +87,12 @@ def mark_task_complete(db: Session, task_id: UUID):
 
 
 # delete task
-def delete_task(db: Session, task_id: UUID):
-    task = db.query(Task).filter(Task.id == task_id, Task.is_deleted == False).first()
+def delete_task(db: Session, task_id: UUID, user_id: str):
+    task = (
+        db.query(Task)
+        .filter(Task.id == task_id, Task.user_id == user_id, Task.is_deleted == False)
+        .first()
+    )
 
     if not task:
         return None
