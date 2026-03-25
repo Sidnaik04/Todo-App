@@ -2,6 +2,9 @@
 
 A full-stack todo application built with **FastAPI** (backend) and **React** (frontend).
 
+Live Demo: `https://your-app.vercel.app`  
+API Docs: `https://your-backend.onrender.com/docs`
+
 ## 🚀 Features
 
 - ✅ Create, read, update, delete tasks
