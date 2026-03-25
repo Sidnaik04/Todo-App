@@ -9,6 +9,6 @@ app = FastAPI()
 app.include_router(task.router, prefix="/tasks", tags=["Tasks"])
 
 
-@app.get("/")
+@app.get("/root")
 def root():
     return {"message": "Todo API running..."}
